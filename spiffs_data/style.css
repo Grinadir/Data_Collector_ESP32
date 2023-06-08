@@ -1,0 +1,15 @@
+.header{
+
+    background-color: rgb(46, 165, 35);
+    margin: 0;
+    text-align: center;
+}
+.global_wrapper{
+
+    padding: 0;
+    background-color: khaki;
+}
+
+.test{
+    background-color: cornflowerblue;
+}

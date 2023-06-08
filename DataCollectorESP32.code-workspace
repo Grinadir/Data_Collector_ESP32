@@ -1,0 +1,30 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"files.associations": {
+			"*.inc": "cpp",
+			"web_server.h": "c",
+			"ssprif.h": "c",
+			"chrono": "c",
+			"esp_netif.h": "c",
+			"esp_sntp.h": "c",
+			"sntp.h": "c",
+			"*.tcc": "cpp",
+			"ctime": "cpp",
+			"cjson.h": "c",
+			"numeric": "c",
+			"fstream": "c",
+			"iostream": "c",
+			"istream": "c",
+			"ostream": "c",
+			"system_error": "c",
+			"regex": "c",
+			"typeinfo": "c",
+			"cstdio": "cpp"
+		}
+	}
+}
