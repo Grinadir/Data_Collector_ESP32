@@ -1,0 +1,80 @@
+<html>
+
+<link href="/style.css" rel="stylesheet">
+
+<style type="text/css"></style>
+
+
+
+<script>
+
+    function sendPostToEsp() {
+        fetch('/post/json', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ "id": 78912 })
+        })
+            .then(response => response.json())
+            .then(response => console.log(JSON.stringify(response)))
+    }
+
+    function onClickFunction() {
+        alert("I am an alert box!");
+        fetch("/json")
+            .then((response) => {
+                return response.json();
+            })
+            .then((data) => {
+                console.log(data);
+                document.getElementById('data').value = data.message;
+
+                ;
+            })
+
+
+    }
+
+
+
+
+
+
+</script>
+
+<head>
+    <meta charset="utf-8">
+    <title>ESP32 is cool MK!</title>
+</head>
+
+<body>
+    <div class="global_wrapper">
+        <div class="header">
+            <H1>ESP32 CONTROLLER</H1>
+        </div>
+        <div class="common_block">
+            <div class="left_bar">
+                <ul>
+                    <li><a href="/wifi_settings">WIFI SETTINGS</a></li>
+                    <li><a href="/data">DATA</a></li>
+                    <li><a href="/about">ABOUT</a></li>
+                </ul>
+            </div>
+
+            <div class="right_big_bar">
+
+                <div>WIFI SSID</div>
+                <div><textarea id="data" text=data.message>data.message</textarea></div>
+                <div>PASSWORD</div>
+                <div><textarea id="data" text=data.message>data.message</textarea></div>
+                <div><button type="submit" id="sendPost" onclick="saveWIFIToEsp()">SAVE</button></div>
+            </div>
+        </div>
+    </div>
+
+
+</body>
+
+</html>
