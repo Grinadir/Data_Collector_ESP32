@@ -65,7 +65,7 @@ void read_file_from_spiffs(const char *path, char * text){
             strncat(text, line, sizeof(line) - 1);
         }
         memset(line,'\0',sizeof(line));
-        printf(text);
+        //printf(text);
         fclose(file);
 
     }

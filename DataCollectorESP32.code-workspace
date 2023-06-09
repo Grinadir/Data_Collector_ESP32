@@ -24,7 +24,14 @@
 			"system_error": "c",
 			"regex": "c",
 			"typeinfo": "c",
-			"cstdio": "cpp"
+			"cstdio": "cpp",
+			"esp_flash.h": "c",
+			"esp_chip_info.h": "c",
+			"esp_system.h": "c",
+			"inttypes.h": "c",
+			"esp_attr.h": "c",
+			"init_first_json.h": "c",
+			"collect_about_esp32.h": "c"
 		}
 	}
 }
