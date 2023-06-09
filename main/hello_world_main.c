@@ -24,7 +24,7 @@
 
 void app_main(void)
 {
-    printf("Start ESP\r\n");
+    printf("Start working ESP\r\n");
 
         //Initialize NVS
     esp_err_t ret = nvs_flash_init();
