@@ -9,13 +9,13 @@ char data_index[4096];
 char data_wifi[4096];
 char data_about[4096];
 char data_json[4096];
+char about_json[600];
 char data_log[100];
 char data_css[1000];
 
 esp_err_t send_web_page(httpd_req_t *req)
 {
     {
-        printf("Send INDEX\r\n");
         int response;
         response = httpd_resp_send(req, data_index, HTTPD_RESP_USE_STRLEN);
 
@@ -56,6 +56,19 @@ esp_err_t send_json(httpd_req_t *req)
 
         int response;
         response = httpd_resp_send(req, data_json, HTTPD_RESP_USE_STRLEN);
+
+        return response;
+    }
+}
+
+esp_err_t send_about_json(httpd_req_t *req)
+{
+    {
+        printf("send about json\r\n");
+        printf(about_json);
+
+        int response;
+        response = httpd_resp_send(req, about_json, HTTPD_RESP_USE_STRLEN);
 
         return response;
     }
@@ -109,6 +122,11 @@ esp_err_t get_json_handler(httpd_req_t *req)
     return send_json(req);
 }
 
+esp_err_t get_about_json_handler(httpd_req_t *req)
+{
+    return send_about_json(req);
+}
+
 esp_err_t post_json_handler(httpd_req_t *req)
 {
     return post_json(req);
@@ -135,6 +153,12 @@ httpd_uri_t uri_get_about = {
     .uri = "/about",
     .method = HTTP_GET,
     .handler = get_req_about_handler,
+    .user_ctx = NULL};
+
+httpd_uri_t uri_get_about_json = {
+    .uri = "/about_json",
+    .method = HTTP_GET,
+    .handler = get_about_json_handler,
     .user_ctx = NULL};
 
 httpd_uri_t css_get = {
@@ -164,13 +188,14 @@ httpd_uri_t log_get = {
 httpd_handle_t setup_server(void)
 {
     printf("Setup server\n");
-    write_file_in_spiffs("/spiffs_data/log.txt", "TEST NEW WRITE FILE\n\r NEW LINE");
+    
     read_file_from_spiffs("/spiffs_data/index.html", data_index);
     read_file_from_spiffs("/spiffs_data/wifi.html", data_wifi);
     read_file_from_spiffs("/spiffs_data/about.html", data_about);
     read_file_from_spiffs("/spiffs_data/style.css", data_css);
     read_file_from_spiffs("/spiffs_data/data.json", data_json);
-    read_file_from_spiffs("/spiffs_data/log.txt", data_log);
+    read_file_from_spiffs_with_output("/spiffs_data/log.txt", data_log);
+    read_file_from_spiffs_with_output("/spiffs_data/about.json", about_json);
     // test_ssprif(data_index, data_json);
     // printf(data_index);
     httpd_config_t config = HTTPD_DEFAULT_CONFIG();
@@ -181,6 +206,7 @@ httpd_handle_t setup_server(void)
         httpd_register_uri_handler(server, &uri_get);
         httpd_register_uri_handler(server, &uri_get_wifi);
         httpd_register_uri_handler(server, &uri_get_about);
+        httpd_register_uri_handler(server, &uri_get_about_json);
         httpd_register_uri_handler(server, &css_get);
         httpd_register_uri_handler(server, &json_get);
         httpd_register_uri_handler(server, &json_post);

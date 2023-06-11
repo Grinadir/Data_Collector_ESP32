@@ -35,9 +35,15 @@ void app_main(void)
     initilization_file_system_spiffs();
     //output_about();
     init_first_JSON();
+    vTaskDelay(500 / portTICK_PERIOD_MS);
+    
 
     wifi_init_sta();
+    
 
     setup_server();
+    
+    
+    
     
 }

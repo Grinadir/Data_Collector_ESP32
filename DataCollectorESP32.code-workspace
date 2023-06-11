@@ -31,7 +31,9 @@
 			"inttypes.h": "c",
 			"esp_attr.h": "c",
 			"init_first_json.h": "c",
-			"collect_about_esp32.h": "c"
+			"collect_about_esp32.h": "c",
+			"sstream": "cpp",
+			"streambuf": "cpp"
 		}
 	}
 }

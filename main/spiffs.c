@@ -1,3 +1,5 @@
+#include "spiffs.h"
+
 #include "esp_log.h"
 #include "nvs_flash.h"
 #include "esp_spiffs.h"
@@ -5,6 +7,7 @@
 #include "esp_event.h"
 #include "string.h"
 #include "cJSON.h"
+#include <stdio.h>
 
 static const char *TAG = "SPIFFS";
 
@@ -14,7 +17,7 @@ void initilization_file_system_spiffs(){
     esp_vfs_spiffs_conf_t conf = {
         .base_path = "/spiffs_data",
         .partition_label = NULL,
-        .max_files = 5,
+        .max_files = 15,
         .format_if_mount_failed = true};
 
     esp_err_t ret = esp_vfs_spiffs_register(&conf);
@@ -71,6 +74,28 @@ void read_file_from_spiffs(const char *path, char * text){
     }
 }
 
+void read_file_from_spiffs_with_output(const char *path, char * text){
+    ESP_LOGI(TAG, "read_file_from_spiffs_with_output");
+    FILE *file = fopen(path, "r");
+    if (file == NULL)
+    {
+        ESP_LOGE(TAG, "File %s does not exist!", path);
+    }
+    else
+    {
+        char line[40] = "";
+        while (fgets(line, sizeof(line), file) != NULL)
+        {
+            strncat(text, line, sizeof(line) - 1);
+            
+        }
+        memset(line,'\0',sizeof(line));
+        printf("text=%s", text);
+        fclose(file);
+
+    }
+}
+
 void write_file_in_spiffs(const char * path, char * text){
     ESP_LOGI(TAG, "Writting in %s\n", path);
     FILE *file = fopen(path, "w");
@@ -81,8 +106,10 @@ void write_file_in_spiffs(const char * path, char * text){
     }
 
     ESP_LOGI(TAG, "Writing data to file: %s\n", path);
+    printf("\nWrite text=%s\n", text);
     fprintf(file, text);  // write data to hello.txt file
     fclose(file);
+    vTaskDelay(500 / portTICK_PERIOD_MS);
     ESP_LOGI(TAG, "File written");
 
 }
