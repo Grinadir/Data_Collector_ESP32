@@ -5,12 +5,11 @@
 #include "collect_about_ESP32.h"
 #include "stdio.h"
 
+static const char *TAG_INIT_FIRST_JSON = "INIT FIRST JSON";
 
 void init_first_JSON()
 {
-    printf("Enter init first JSON\r\n");
     char *jsonString;
-    char *nullTerminate='\0';
     collection_about_esp about_struct;
     collect_about(&about_struct);
     cJSON *about = cJSON_CreateObject();
@@ -43,20 +42,7 @@ void init_first_JSON()
     cJSON_AddItemToObject(about, "flash_size", cJSON_CreateNumber(about_struct.flash_size));
     cJSON_AddItemToObject(about, "free_heap", cJSON_CreateNumber(about_struct.free_heap));
     cJSON_AddItemToObject(about, "WIFI", cJSON_CreateString("YES"));
-    cJSON_AddItemToObject(about, "Mrt", cJSON_CreateString("AA"));
-    cJSON_AddItemToObject(about, "Mew", cJSON_CreateString("AA"));
     jsonString = cJSON_PrintUnformatted(about);
-    //printf("%s\n", jsonString);
-    //write_file_in_spiffs("/spiffs_data/about.json", "WRITE TESTING\n\r");
-    int i=1;
-    while (i!=0)
-    {
-        write_file_in_spiffs("/spiffs_data/about.json", jsonString);
-        i--;
-
-    }
-    
-    
-    
-
+    write_file_in_spiffs("/spiffs_data/about.json", jsonString);
+    ESP_LOGI(TAG_INIT_FIRST_JSON, "Create about.json");   
 }

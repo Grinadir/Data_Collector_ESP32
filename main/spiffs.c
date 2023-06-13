@@ -68,7 +68,6 @@ void read_file_from_spiffs(const char *path, char * text){
             strncat(text, line, sizeof(line) - 1);
         }
         memset(line,'\0',sizeof(line));
-        //printf(text);
         fclose(file);
 
     }
@@ -90,14 +89,13 @@ void read_file_from_spiffs_with_output(const char *path, char * text){
             
         }
         memset(line,'\0',sizeof(line));
-        printf("text=%s", text);
         fclose(file);
 
     }
 }
 
 void write_file_in_spiffs(const char * path, char * text){
-    ESP_LOGI(TAG, "Writting in %s\n", path);
+    ESP_LOGI(TAG, "Writting in %s", path);
     FILE *file = fopen(path, "w");
     if (file == NULL)
     {
@@ -105,9 +103,8 @@ void write_file_in_spiffs(const char * path, char * text){
         return;
     }
 
-    ESP_LOGI(TAG, "Writing data to file: %s\n", path);
-    printf("\nWrite text=%s\n", text);
-    fprintf(file, text);  // write data to hello.txt file
+    ESP_LOGI(TAG, "Writing data to file: %s", path);
+    fprintf(file, text); 
     fclose(file);
     vTaskDelay(500 / portTICK_PERIOD_MS);
     ESP_LOGI(TAG, "File written");

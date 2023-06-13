@@ -21,14 +21,9 @@
 #include "lwip/err.h"
 #include "lwip/sys.h"
 
-/* The examples use WiFi configuration that you can set via project configuration menu
 
-   If you'd rather not, just change the below entries to strings with
-   the config you want - ie #define EXAMPLE_WIFI_SSID "mywifissid"
-*/
-
-#define EXAMPLE_ESP_WIFI_SSID    ""
-#define EXAMPLE_ESP_WIFI_PASS     ""
+#define EXAMPLE_ESP_WIFI_SSID    ""  //Enter your WIFI SSID
+#define EXAMPLE_ESP_WIFI_PASS     "" //Enter your WIFI password
 #define EXAMPLE_ESP_MAXIMUM_RETRY  9
 
 /* FreeRTOS event group to signal when we are connected*/
@@ -103,7 +98,6 @@ void wifi_init_sta(void)
     };
     ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_STA) );
     ESP_ERROR_CHECK(esp_wifi_set_config(WIFI_IF_STA, &wifi_config) );
-    //printf("ERROR==========%u", esp_wifi_start() );
     ESP_ERROR_CHECK(esp_wifi_start() );
 
     ESP_LOGI(TAG, "wifi_init_sta finished.");
@@ -133,17 +127,3 @@ void wifi_init_sta(void)
     ESP_ERROR_CHECK(esp_event_handler_instance_unregister(WIFI_EVENT, ESP_EVENT_ANY_ID, instance_any_id));
     vEventGroupDelete(s_wifi_event_group);
 }
-
-// void app_main(void)
-// {
-//     //Initialize NVS
-//     esp_err_t ret = nvs_flash_init();
-//     if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND) {
-//       ESP_ERROR_CHECK(nvs_flash_erase());
-//       ret = nvs_flash_init();
-//     }
-//     ESP_ERROR_CHECK(ret);
-
-//     ESP_LOGI(TAG, "ESP_WIFI_MODE_STA");
-//     wifi_init_sta();
-// }
