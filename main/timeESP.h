@@ -2,4 +2,5 @@
 #define TIME_ESP_H
 void obtain_time(void);
 void initialize_sntp(void);
+void loop_show_tine(void);
 #endif

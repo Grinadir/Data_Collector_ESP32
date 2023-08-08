@@ -49,3 +49,12 @@ li a:hover {
     background-color: #555;
     color: white;
 }
+
+.hidden {
+    visibility: hidden;
+
+}
+
+.ap{
+    background-color: white;
+}

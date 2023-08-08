@@ -14,7 +14,48 @@
 </head>
 
 <body>
+    
+    <div class="global_wrapper">
+        <div class="header">
+            <H1>ESP32 CONTROLLER</H1>
+        </div>
+        <div class="common_block">
+            <div class="left_bar">
+                <ul>
+                    <li><a href="/wifi_settings">WIFI SETTINGS</a></li>
+                    <li><a href="/data">DATA</a></li>
+                    <li><a href="/about">ABOUT</a></li>
+                </ul>
+            </div>
+
+            <div class="right_big_bar">
+                <div>MODEL OF ESP: <label id="model">undefined</label></div>
+                <div>FLESH: <label id="flash_size">undefined</label></div>
+                <div>PSRAM:-------------</div>
+                <div>FREE HEAP: <label id="free_heap">undefined</label></div>
+                <div>--------------------------------------------------</div>
+                <p ><label id="text_about_ap">!!!NOW AP WORK</label></p>
+                <div><button>STOP AP</button></div>
+
+            </div>
+        </div>
+    </div>
+
     <script>
+        var para = document.querySelector("p");
+
+        //var para = document.getElementById('text_about_ap').innerHTML;
+
+        function add_text_about_ap() {
+            const AP = 'true';
+            
+            if (AP === 'true') {
+                para.textContent="kjhhkhkgk";
+                
+                console.log("!!add text ap");
+            } 
+        }
+
 
 
 
@@ -70,34 +111,10 @@
 
 
         }
-
+        add_text_about_ap();
         getAboutJsonEsp();
 
     </script>
-    <div class="global_wrapper">
-        <div class="header">
-            <H1>ESP32 CONTROLLER</H1>
-        </div>
-        <div class="common_block">
-            <div class="left_bar">
-                <ul>
-                    <li><a href="/wifi_settings">WIFI SETTINGS</a></li>
-                    <li><a href="/data">DATA</a></li>
-                    <li><a href="/about">ABOUT</a></li>
-                </ul>
-            </div>
-
-            <div class="right_big_bar">
-                <div>MODEL OF ESP: <label id="model">undefined</label></div>
-                <div>FLESH: <label id="flash_size">undefined</label></div>
-                <div>PSRAM:-------------</div>
-                <div>FREE HEAP: <label id="free_heap">undefined</label></div>
-
-            </div>
-        </div>
-    </div>
-
-
 </body>
 
 </html>

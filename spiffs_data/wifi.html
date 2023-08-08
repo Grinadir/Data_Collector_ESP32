@@ -4,52 +4,29 @@
 
 <style type="text/css"></style>
 
-
-
-<script>
-
-    function sendPostToEsp() {
-        fetch('/post/json', {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ "id": 78912 })
-        })
-            .then(response => response.json())
-            .then(response => console.log(JSON.stringify(response)))
-    }
-
-    function onClickFunction() {
-        alert("I am an alert box!");
-        fetch("/json")
-            .then((response) => {
-                return response.json();
-            })
-            .then((data) => {
-                console.log(data);
-                document.getElementById('data').value = data.message;
-
-                ;
-            })
-
-
-    }
-
-
-
-
-
-
-</script>
-
 <head>
     <meta charset="utf-8">
     <title>ESP32 is cool MK!</title>
 </head>
 
 <body>
+    <script>
+
+
+        function sendToStopAP() {
+            console.log("send to sto ap");
+            fetch('/stop_ap', {
+                method: 'GET',
+                headers: {
+                    'Accept': '*/*',
+                },
+            })
+        }
+
+
+
+
+    </script>
     <div class="global_wrapper">
         <div class="header">
             <H1>ESP32 CONTROLLER</H1>
@@ -66,15 +43,85 @@
             <div class="right_big_bar">
 
                 <div>WIFI SSID</div>
-                <div><textarea id="data" text=data.message>data.message</textarea></div>
+                <div><textarea id="ssid_client" text=data.message>data.message</textarea></div>
                 <div>PASSWORD</div>
-                <div><textarea id="data" text=data.message>data.message</textarea></div>
-                <div><button type="submit" id="sendPost" onclick="saveWIFIToEsp()">SAVE</button></div>
+                <div><textarea id="password_client" text=data_message>data.message</textarea></div>
+                <div><button type="submit" id="sendPost" onclick="save_WiFi_JSON()">SAVE</button></div>
+                <div class="ap">----------------------------------------------------------------</div>
+                <div class="ap">Now AP is ON</div>
+                <div class="ap"> <button onclick="sendToStopAP()">AP OFF</button></div>
             </div>
         </div>
     </div>
 
+    <script>
 
+
+
+        function onClickFunction() {
+            alert("I am an alert box!");
+            fetch("/json")
+                .then((response) => {
+                    return response.json();
+                })
+                .then((data) => {
+                    console.log(data);
+                    document.getElementById('data').value = data.message;
+                })
+
+
+        }
+
+        function get_WiFi_JSON() {
+            fetch('/wifi_json', {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+            })
+                .then(response => response.json())
+                .then(response => {
+
+                    var json = JSON.stringify(response);
+                    var wifi = JSON.parse(json);
+                    var ap = wifi.ap_active;
+                    if (ap != "yes") {
+
+                        var accessPointInfo = document.querySelectorAll(".ap");
+
+                        accessPointInfo.forEach(function (accessPointInfo) {
+                            accessPointInfo.classList.add("hidden");
+                        });
+                    }
+
+                })
+
+        }
+        function save_WiFi_JSON() {
+
+            const wifi_data = {
+                ssid_client: document.getElementById('ssid_client').value,
+                password_client: document.getElementById('password_client').value
+
+            }
+
+            fetch('/wifi_json_post', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(wifi_data)
+            })
+
+        }
+
+
+        get_WiFi_JSON();
+        //add_text_about_ap();
+
+    </script>
 </body>
 
 </html>

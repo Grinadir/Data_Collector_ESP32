@@ -22,6 +22,26 @@
                 ],
                 "limitSymbolsToIncludedHeaders": false
             }
+        },
+        {
+            "name": "ESP-IDF LINUX",
+            "compilerPath": "/home/t1/.espressif/tools/xtensa-esp32-elf/esp-12.2.0_20230208/xtensa-esp32-elf/bin/xtensa-esp32-elf-gcc",
+            "cStandard": "c11",
+            "cppStandard": "c++17",
+            "includePath": [
+                //"/home/t1/esp/esp-idf/components/freertos/FreeRTOS-Kernel/include/freertos/**",
+                "/home/t1/esp/esp-idf/**",
+                "${workspaceFolder}/**"
+            ],
+            "browse": {
+                "path": [
+                    //"/home/t1/esp/esp-idf/components/freertos/FreeRTOS-Kernel/include/freertos",
+                    "/home/t1/esp/esp-idf/**",
+                    "${workspaceFolder}"
+                ],
+                "limitSymbolsToIncludedHeaders": false
+            },
+            "mergeConfigurations": false
         }
     ],
     "version": 4

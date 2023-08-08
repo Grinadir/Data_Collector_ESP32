@@ -2,6 +2,9 @@
 	"folders": [
 		{
 			"path": "."
+		},
+		{
+			"path": "./*"
 		}
 	],
 	"settings": {
@@ -35,7 +38,15 @@
 			"sstream": "cpp",
 			"streambuf": "cpp",
 			"wifi_client.h": "c",
-			"gpio_types.h": "c"
+			"gpio_types.h": "c",
+			"task.h": "c",
+			"freertos.h": "c",
+			"queue.h": "c",
+			"wifi_ap.h": "c",
+			"spiffs.h": "c",
+			"gpio.h": "c",
+			"wifi_json.h": "c",
+			"esp_mac.h": "c"
 		}
 	}
 }
