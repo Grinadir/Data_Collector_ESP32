@@ -92,7 +92,7 @@ void IRAM_ATTR isrHandler(void *arg)
 }
 void app_main(void)
 {
-  ESP_LOGI(TAG, "Start app_main!!!");
+  ESP_LOGI(TAG, "-=START MAIN APLICATION=-");
       
 
 
@@ -118,11 +118,6 @@ void app_main(void)
   initilization_file_system_spiffs();
   init_first_JSON();
   init_wifi_settings_from_json_file();
-  char *a="";//[20];
-  char *b="";//[20];
-  char *s="";//[20];
-  char *d="";//[20];
-  get_wifi_settings(a,b,s,d,is_ap_active);
   vTaskDelay(500 / portTICK_PERIOD_MS);
   wifi_init_sta();
   setup_server();

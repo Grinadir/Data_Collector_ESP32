@@ -4,5 +4,9 @@
   "idf.portWin": "COM10",
   "idf.adapterTargetName": "esp32",
   "idf.port": "/dev/ttyUSB0",
-  "cmake.configureOnOpen": true
+  "cmake.configureOnOpen": true,
+  "files.associations": {
+    "string": "c",
+    "settings_esp.h": "c"
+  }
 }

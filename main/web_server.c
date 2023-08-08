@@ -29,7 +29,7 @@ void load_spiffs_to_buffer()
     read_file_from_spiffs("/spiffs_data/wifi.json", wifi_json);
     read_file_from_spiffs_with_output("/spiffs_data/log.txt", data_log);
     read_file_from_spiffs_with_output("/spiffs_data/about.json", about_json);
-    ESP_LOGI(TAG, "Load data buffer for server");
+    ESP_LOGI(TAG, "Load data buffer for server.");
 }
 
 void clear_buffer()
@@ -43,22 +43,14 @@ void clear_buffer()
     strcpy(wifi_json, "");
     strcpy(data_log, "");
     strcpy(data_css, "");
-    ESP_LOGI(TAG, "Clear data buffer for server");
+    ESP_LOGI(TAG, "Clear data buffer for server.");
 }
 
 void update_for_server()
 {
     clear_buffer();
-
-    read_file_from_spiffs("/spiffs_data/index.html", data_index);
-    read_file_from_spiffs("/spiffs_data/wifi.html", data_wifi);
-    read_file_from_spiffs("/spiffs_data/about.html", data_about);
-    read_file_from_spiffs("/spiffs_data/style.css", data_css);
-    read_file_from_spiffs("/spiffs_data/data.json", data_json);
-    read_file_from_spiffs("/spiffs_data/wifi.json", wifi_json);
-    read_file_from_spiffs_with_output("/spiffs_data/log.txt", data_log);
-    read_file_from_spiffs_with_output("/spiffs_data/about.json", about_json);
-    ESP_LOGI(TAG, "Update data buffer for server");
+    load_spiffs_to_buffer();
+    ESP_LOGI(TAG, "Data buffer for server was updated!");
 }
 
 esp_err_t send_web_page(httpd_req_t *req)
@@ -321,8 +313,6 @@ httpd_uri_t log_get = {
 httpd_handle_t setup_server(void)
 {
     load_spiffs_to_buffer();
-    // test_ssprif(data_index, data_json);
-    // printf(data_index);
     httpd_config_t config = HTTPD_DEFAULT_CONFIG();
     httpd_handle_t server = NULL;
     if (httpd_start(&server, &config) == ESP_OK)
@@ -339,6 +329,6 @@ httpd_handle_t setup_server(void)
         httpd_register_uri_handler(server, &json_post);
         httpd_register_uri_handler(server, &log_get);
     }
-    ESP_LOGI(TAG, "Register uri");
+    ESP_LOGI(TAG, "URI addresses have been successfully registered.");
     return server;
 }
