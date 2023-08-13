@@ -22,6 +22,7 @@
         <div class="common_block">
             <div class="left_bar">
                 <ul>
+                    <li><a href="/">COMMON</a></li>
                     <li><a href="/wifi_settings">WIFI SETTINGS</a></li>
                     <li><a href="/data">DATA</a></li>
                     <li><a href="/about">ABOUT</a></li>
@@ -42,23 +43,6 @@
     </div>
 
     <script>
-        var para = document.querySelector("p");
-
-        //var para = document.getElementById('text_about_ap').innerHTML;
-
-        function add_text_about_ap() {
-            const AP = 'true';
-            
-            if (AP === 'true') {
-                para.textContent="kjhhkhkgk";
-                
-                console.log("!!add text ap");
-            } 
-        }
-
-
-
-
         function sendPostToEsp() {
             fetch('/post/json', {
                 method: 'POST',
@@ -92,8 +76,6 @@
                     document.getElementById('free_heap').innerHTML = about.free_heap;
                 })
 
-
-
         }
 
         function onClickFunction() {
@@ -108,10 +90,7 @@
 
                     ;
                 })
-
-
         }
-        add_text_about_ap();
         getAboutJsonEsp();
 
     </script>

@@ -5,7 +5,6 @@
 #include "collect_about_ESP32.h"
 #include "stdio.h"
 #include "settings_esp.h"
-
 #define getName(var) #var
 
 static const char *TAG_DATA_JSON = "WORK WITH JSON DATA";
@@ -90,7 +89,7 @@ void set_wifi_JSON_Info(char *SSID_Client, char *password_client, char *SSID_AP,
 
 void get_wifi_settings(char *SSID_Client, char *password_client, char *SSID_AP, char *password_ap, uint8_t is_ap_active)
 {
-    char jsonString[300];
+    char jsonString[300] = "";
     read_file_from_spiffs("/spiffs_data/wifi.json", jsonString);
     cJSON *wifi_settings = cJSON_Parse(jsonString);
     cJSON *json_ssid_client = cJSON_GetObjectItem(wifi_settings, "ssid_client");
@@ -110,12 +109,12 @@ void get_wifi_settings(char *SSID_Client, char *password_client, char *SSID_AP, 
     else
         ESP_LOGE(TAG, " cJSON Object is NULL!");
 }
-#if 1
 void init_wifi_settings_from_json_file()
 {
 
-    char jsonString[300];
+    char jsonString[300] = "";
     read_file_from_spiffs("/spiffs_data/wifi.json", jsonString);
+    printf("s: %s", jsonString);
     cJSON *wifi_settings = cJSON_Parse(jsonString);
     cJSON *json_ssid_client = cJSON_GetObjectItem(wifi_settings, "ssid_client");
     cJSON *json_password_client = cJSON_GetObjectItem(wifi_settings, "password_client");
@@ -125,6 +124,97 @@ void init_wifi_settings_from_json_file()
     _set_parametr_from_cJSON(json_ssid_client, &all_settings.wifi_settings.ssid_client);
     _set_parametr_from_cJSON(json_password_client, &all_settings.wifi_settings.password_client);
     output_settings();
-
 }
-#endif
+
+void save_humidity_temperature_in_json(float hum, float temp, char *time)
+{
+
+    char jsonString[1000] = "";
+    static int i = 0;
+    read_file_from_spiffs("/spiffs_data/data.json", jsonString);
+    cJSON *common_data = cJSON_Parse(jsonString);
+    printf("%s\n", jsonString);
+    cJSON *json_data_array = cJSON_GetObjectItem(common_data, "data_array");
+    cJSON *key = cJSON_GetObjectItem(common_data, "key");
+    if (json_data_array != NULL)
+    {
+        printf("s: %s\n", json_data_array->string);
+        printf("i: %d\n", i);
+        // i++;
+    }
+    else
+        printf("array is null %d\n", i);
+
+    char buff_temp_big[5];
+    char buff_temp[5];
+
+    int ret = snprintf(buff_temp_big, sizeof buff_temp_big, "%.2f", temp);
+    strncpy(buff_temp, buff_temp_big, 5);
+    printf("buff_temp=%s\n", buff_temp);
+
+    char buff_hum_big[5];
+    char buff_hum[5];
+
+    ret = snprintf(buff_hum_big, sizeof buff_hum_big, "%.2f", hum);
+    strncpy(buff_hum, buff_hum_big, 5);
+
+    cJSON *wrapper = cJSON_CreateObject();
+    // cJSON *data_array = cJSON_CreateArray();
+    if (i < 21)
+    {
+        cJSON *messuare_in_time = cJSON_CreateObject();
+
+        cJSON_AddItemToObject(messuare_in_time, "time", cJSON_CreateString("test_time"));
+        cJSON_AddItemToObject(messuare_in_time, "t", cJSON_CreateString(buff_temp));
+        cJSON_AddItemToObject(messuare_in_time, "h", cJSON_CreateString(buff_hum));
+        cJSON_AddItemToArray(json_data_array, messuare_in_time);
+        i++;
+    }
+    // cJSON *messuare_in_time2 = cJSON_CreateObject();
+    // cJSON_AddItemToObject(messuare_in_time2, "time", cJSON_CreateString("22test_time"));
+    // cJSON_AddItemToObject(messuare_in_time2, "t", cJSON_CreateString("22buff_temp"));
+    // cJSON_AddItemToObject(messuare_in_time2, "h", cJSON_CreateString("22buff_hum"));
+    //  cJSON_AddItemToObject(wrapper, "data_array", messuare-in_time);
+    ESP_LOGW(TAG, "CHECK POINT");
+
+    // cJSON_AddItemToArray(data_array, messuare_in_time2);
+
+    cJSON_AddItemToObject(wrapper, "data_array", json_data_array);
+
+    // cJSON_AddItemToArray(data_array, )
+    // cJSON_AddArrayToObject(wrapper, data)
+    // cJSON_AddObjectToObject
+    ESP_LOGW(TAG, "CHECK POINT");
+    if (wrapper != NULL)
+        strcpy(jsonString, cJSON_PrintUnformatted(wrapper));
+    else
+        ESP_LOGE(TAG, "wrapper is NULL!");
+    // strncopy jsonString=cJSON_PrintUnformatted(common_data);
+    ESP_LOGW(TAG, "CHECK POINT");
+    write_file_in_spiffs("/spiffs_data/data.json", jsonString);
+    ESP_LOGI(TAG_DATA_JSON, "Create data.json");
+}
+
+void save_humidity_temperature_in_struct(float hum, float temp, char **time, struct data_temperature_and_humidity *data_t_h)
+{
+    static int i = 0;
+    if (i <= 287)
+    {
+        strncpy(data_t_h[i].time, time, 64);
+        data_t_h[i].temperature = temp;
+        data_t_h[i].humidity = hum;
+    }
+    for (int ii = 0; ii <= i; ii++)
+    {
+        if (ii == i)
+        {
+            printf("ii: %d\n", ii);
+            printf("time: %s\n", data_t_h[ii].time);
+            printf("temp: %.2f\n", data_t_h[ii].temperature);
+            printf("hum: %.2f\n", data_t_h[ii].humidity);
+            printf("-------------------\n");
+        }
+    }
+    if (i <= 287)
+        i++;
+}

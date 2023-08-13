@@ -7,21 +7,7 @@
 
 
 <script>
-
-    function sendPostToEsp() {
-        fetch('/post/json', {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ "id": 78912 })
-        })
-            .then(response => response.json())
-            .then(response => console.log(JSON.stringify(response)))
-    }
-
-    function onClickFunction() {
+    function onClickSave() {
         alert("I am an alert box!");
         fetch("/json")
             .then((response) => {
@@ -47,23 +33,20 @@
         <div class="common_block">
             <div class="left_bar">
                 <ul>
+                    <li><a href="/">COMMON</a></li>
                     <li><a href="/wifi_settings">WIFI SETTINGS</a></li>
                     <li><a href="/data">DATA</a></li>
                     <li><a href="/about">ABOUT</a></li>
-                    <li><a href="/exit">EXIT</a></li>
                 </ul>
             </div>
 
             <div class="right_big_bar">
                 <div class="test">
-                    <div>How are you?</div>
+                    <div>This microcontroller ESP32 works to transmit data to the server.</div>
                 </div>
-                <div>
-                    <div>ESP32.</div>
-                </div>
-                <div><textarea id="data" text=data.message>data.message</textarea></div>
-                <div><button type="submit" id="submit" onclick="onClickFunction()">Нажми меня</button></div>
-                <div><button type="submit" id="sendPost" onclick="sendPostToEsp()">POST</button></div>
+                <div><textarea id="server_ip" text=data.message>data.message</textarea></div>
+                <div><textarea id="server_port" text=data.message>data.message</textarea></div>
+                <div><button type="submit" id="submit" onclick="onClickSave()">SAVE</button></div>
             </div>
         </div>
     </div>

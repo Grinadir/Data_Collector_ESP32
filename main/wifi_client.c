@@ -26,7 +26,7 @@ extern struct all_settings_esp all_settings;
 
 #define EXAMPLE_ESP_WIFI_SSID all_settings.wifi_settings.ssid_client      // Enter your WIFI SSID
 #define EXAMPLE_ESP_WIFI_PASS all_settings.wifi_settings.password_client // Enter your WIFI password
-#define EXAMPLE_ESP_MAXIMUM_RETRY 5
+#define EXAMPLE_ESP_MAXIMUM_RETRY 1
 
 /* FreeRTOS event group to signal when we are connected*/
 static EventGroupHandle_t s_wifi_event_group;

@@ -62,7 +62,7 @@ void read_file_from_spiffs(const char *path, char * text){
     }
     else
     {
-        char line[40] = "";
+        char line[60] = "";
         while (fgets(line, sizeof(line), file) != NULL)
         {
             strncat(text, line, sizeof(line) - 1);
@@ -73,7 +73,7 @@ void read_file_from_spiffs(const char *path, char * text){
     }
 }
 
-void read_file_from_spiffs_with_output(const char *path, char * text){
+void read_file_from_spiffs_with_output(const char *path, char *text){
     ESP_LOGI(TAG, "read_file_from_spiffs_with_output");
     FILE *file = fopen(path, "r");
     if (file == NULL)
@@ -82,7 +82,7 @@ void read_file_from_spiffs_with_output(const char *path, char * text){
     }
     else
     {
-        char line[40] = "";
+        char line[60] = "";
         while (fgets(line, sizeof(line), file) != NULL)
         {
             strncat(text, line, sizeof(line) - 1);

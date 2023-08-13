@@ -7,6 +7,9 @@
   "cmake.configureOnOpen": true,
   "files.associations": {
     "string": "c",
-    "settings_esp.h": "c"
+    "settings_esp.h": "c",
+    "dht.h": "c",
+    "cstdlib": "c",
+    "ctime": "c"
   }
 }

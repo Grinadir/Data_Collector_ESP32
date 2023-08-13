@@ -82,3 +82,30 @@ void loop_show_tine()
         ESP_LOGI(TAG, "The current date/time in MOSCOW is: %s", strftime_buf);
     }
 }
+
+void get_time(char *time_for_update)
+{
+    char strftime_buf[64];
+    time_t now = 0;
+    struct tm timeinfo;
+
+    // vTaskDelay(60000 / portTICK_PERIOD_MS);
+    time(&now);
+    //ESP_LOGI(TAG, "timestamp %lld", now);
+
+    localtime_r(&now, &timeinfo);
+    strftime(strftime_buf, sizeof(strftime_buf), "%c", &timeinfo);
+    //ESP_LOGI(TAG, "The current date/time in MOSCOW is: %s", strftime_buf);
+
+    //char *p = malloc(sizeof(strftime_buf));
+    strncpy(time_for_update, strftime_buf, 64);
+    printf("hh %s\n", time_for_update);
+    //return p;
+}
+
+time_t get_timestamp()
+{
+    time_t now = 0;
+    time(&now);
+    return now;
+}
