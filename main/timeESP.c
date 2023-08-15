@@ -99,7 +99,7 @@ void get_time(char *time_for_update)
 
     //char *p = malloc(sizeof(strftime_buf));
     strncpy(time_for_update, strftime_buf, 64);
-    printf("hh %s\n", time_for_update);
+    //printf("hh %s\n", time_for_update);
     //return p;
 }
 

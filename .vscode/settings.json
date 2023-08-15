@@ -10,6 +10,9 @@
     "settings_esp.h": "c",
     "dht.h": "c",
     "cstdlib": "c",
-    "ctime": "c"
+    "ctime": "c",
+    "compare": "c",
+    "array": "c",
+    "string_view": "c"
   }
 }

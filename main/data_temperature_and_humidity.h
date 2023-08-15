@@ -7,5 +7,6 @@ struct data_temperature_and_humidity
     float humidity;
 };
 
+extern char data[1000];
 #endif
 

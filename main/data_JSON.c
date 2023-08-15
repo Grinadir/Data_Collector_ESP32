@@ -218,3 +218,37 @@ void save_humidity_temperature_in_struct(float hum, float temp, char **time, str
     if (i <= 287)
         i++;
 }
+
+void struct_to_array_json(struct data_temperature_and_humidity *data_t_h, char *array, uint16_t count)
+{
+    cJSON *wrapper = cJSON_CreateObject();
+    cJSON *data_array = cJSON_CreateArray();
+    
+
+    char buff_temp[5];
+    char buff_hum[5];
+
+    for (uint16_t i = 0; i < count; i++)
+    {
+
+        cJSON *messuare_in_time = cJSON_CreateObject();
+        snprintf(buff_temp, sizeof buff_temp, "%.2f", data_t_h[i].temperature);
+        snprintf(buff_hum, sizeof buff_hum, "%.2f", data_t_h[i].humidity);
+        cJSON_AddItemToObject(messuare_in_time, "tm", cJSON_CreateString(data_t_h[i].time));
+        cJSON_AddItemToObject(messuare_in_time, "t", cJSON_CreateString(buff_temp));
+        cJSON_AddItemToObject(messuare_in_time, "h", cJSON_CreateString(buff_hum));
+        cJSON_AddItemToArray(data_array, messuare_in_time);
+        
+    }
+    cJSON_AddItemToObject(wrapper, "data_array", data_array);
+
+    if (wrapper != NULL)
+    {
+
+        strcpy(array, cJSON_PrintUnformatted(wrapper));
+        printf("%s\n", array);
+    }
+
+    else
+        ESP_LOGE(TAG, "ERROR with wrapper");
+}
