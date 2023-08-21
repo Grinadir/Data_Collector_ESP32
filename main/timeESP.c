@@ -11,7 +11,6 @@
 #include "esp_sleep.h"
 #include "nvs_flash.h"
 #include "esp_sntp.h"
-#include "sntp.h"
 #include "esp_netif.h"
 
 static const char *TAG = "TIME";
@@ -26,12 +25,12 @@ void initialize_sntp(void)
     ESP_LOGI(TAG, "Initializing SNTP");
     setenv("TZ", "MSK-3", 1);
     tzset();
-    sntp_setoperatingmode(SNTP_OPMODE_POLL);
-    sntp_setservername(0, "pool.ntp.org");
-    sntp_setservername(1, "1.ru.pool.ntp.org");
+    esp_sntp_setoperatingmode(SNTP_OPMODE_POLL);
+    esp_sntp_setservername(0, "pool.ntp.org");
+    esp_sntp_setservername(1, "1.ru.pool.ntp.org");
 
     sntp_set_time_sync_notification_cb(time_sync_notification_cb);
-    sntp_init();
+    esp_sntp_init();
 }
 
 void obtain_time(void)

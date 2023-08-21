@@ -1,5 +1,6 @@
 #ifndef TIME_ESP_H
 #define TIME_ESP_H
+#include <time.h>
 void obtain_time(void);
 void initialize_sntp(void);
 void loop_show_tine(void);

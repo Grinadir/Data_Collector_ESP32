@@ -186,7 +186,7 @@ esp_err_t stop_ap(httpd_req_t *req)
 
     response = httpd_resp_send(req, "OK", HTTPD_RESP_USE_STRLEN);
 
-    return 0;
+    return response;
 }
 
 esp_err_t post_json(httpd_req_t *req)

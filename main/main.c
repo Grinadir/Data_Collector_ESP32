@@ -25,9 +25,24 @@
 #include "hal/gpio_types.h"
 #include "data_temperature_and_humidity.h"
 #include "DHT.h"
+#include "tasks.h"
+#include "http_esp_client.h"
 
-#define BUTTON_AP_WIFI GPIO_NUM_18
-#define SAMPL_MESSUARE_SEC 3
+
+
+
+#define DBG_OUTPUT_ENABLED
+#ifdef DBG_OUTPUT_ENABLED
+#define LOGI ESP_LOGI
+#define LOGE ESP_LOGE
+#define LOGW ESP_LOGW
+#else
+#define LOGI ESP_LOGI
+#define LOGE ESP_LOGE
+#define LOGW ESP_LOGW
+#endif
+
+
 static const char *TAG = "MAIN";
 
 uint8_t is_ap_active = 0;
@@ -40,103 +55,9 @@ char data[1000] = "\0";
 
 static QueueHandle_t button_queue = NULL;
 
-void task_wifi_server(void *pvParameters)
-{
-  bool but_pressed;
-  while (1)
-  {
-    ESP_LOGI(TAG, "Start task wifi server");
-    // Ждем события нажатия кнопки в очереди
-    if (xQueueReceive(button_queue, &but_pressed, portMAX_DELAY) && is_ap_active == 0)
-    {
-      ESP_LOGI("ISR", "Button is pressed");
-      uint8_t i = 0;
-      while (i < 30)
-      {
-        vTaskDelay(100 / portTICK_PERIOD_MS);
 
-        if (gpio_get_level(BUTTON_AP_WIFI) != 0)
-          i = 44;
-        else
-          i++;
-      }
-      if (i == 30)
-      {
-        ESP_LOGI("ISR", "BUTTON 3 sec pressed!");
-        if (esp_delete_wifi_sta() == ESP_OK)
-        {
-          wifi_init_softap();
-          update_for_server();
-          is_ap_active = 1;
-        }
-        else
-          ESP_LOGE("ISR", "FAILLED TO CREATE AP");
-      }
-      else
-      {
-        ESP_LOGI("ISR", "BUTTON not 3 sec pressed");
-      }
-    }
-    else if (is_ap_active)
-    {
-      ESP_LOGE("ISR", "AP is already active!");
-    }
-  };
-  vTaskDelete(NULL);
-}
 
-void DHT_task(void *pvParameter)
-{
-  setDHTgpio(GPIO_NUM_4);
-  ESP_LOGI(TAG, "Starting DHT Task\n\n");
-  char time[64];
-  uint8_t is_log = 0;
-  uint16_t count = 0;
-  while (1)
-  {
-    // strncpy(time, getTime(), 64);
-    get_time(time);
-    // printf("%lu\n", (unsigned long)esp_get_free_heap_size);
-    // printf("%lu\n", (unsigned long)esp_get_free_internal_heap_size);
 
-    vTaskDelay(100 / portTICK_PERIOD_MS);
-    if ((long)get_timestamp() % SAMPL_MESSUARE_SEC == 0 && is_log == 0)
-    {
-      // strncpy(time, getTime(), 64);
-      get_time(time);
-      ESP_LOGI(TAG, "=== Reading DHT ===\n");
-      int ret = readDHT();
-
-      errorHandler(ret);
-
-      // ESP_LOGI(TAG, "Hum: %.1f Tmp: %.1f\n", getHumidity(), getTemperature());
-      //  char timeQ[64];
-      //   timeQ=getTime();
-      //  strncpy(time, getTime(), 64);
-      get_time(time);
-      // printf("TEST time %s\n", time);
-      save_humidity_temperature_in_struct(getHumidity(), getTemperature(), &time, data_t_h);
-      // free(timeQ);
-      // printf("%lu\n", (unsigned long)esp_get_free_heap_size);
-      // printf("%lu\n", (unsigned long)esp_get_free_internal_heap_size);
-      // -- wait at least 2 sec before reading again ------------
-      // The interval of whole process must be beyond 2 seconds !!
-      is_log = 1;
-      count++;
-      if (count == 3)
-      {
-        struct_to_array_json(data_t_h, data, count);
-        ESP_LOGI("TAG", "SAVE to array");
-      }
-    }
-    else if ((long)get_timestamp() % SAMPL_MESSUARE_SEC != 0 && is_log == 1)
-    {
-      is_log = 0;
-    }
-  }
-  // ESP_LOGE("DHT_TASK FAILED")
-  vTaskDelete(NULL);
-}
 
 void IRAM_ATTR isrHandler(void *arg)
 {
@@ -151,11 +72,11 @@ void IRAM_ATTR isrHandler(void *arg)
 }
 void app_main(void)
 {
-  ESP_LOGI(TAG, "-=START MAIN APLICATION=-");
+  LOGI(TAG, "START MAIN APLICATION");
 
   button_queue = xQueueCreate(32, sizeof(bool));
 
-  xTaskCreatePinnedToCore(task_wifi_server, "wifi server", 4096, NULL, 5, NULL, 0);
+  
 
   gpio_install_isr_service(0);
   gpio_set_direction(GPIO_NUM_18, GPIO_MODE_INPUT);
@@ -180,7 +101,11 @@ void app_main(void)
   setup_server();
   initialize_sntp();
   obtain_time();
-  // loop_show_tine();
+  
 
-  xTaskCreate(&DHT_task, "DHT_task", 60000, NULL, 5, NULL);
+  xTaskCreatePinnedToCore(&create_wifi_access_point, "AP_task", 4096, (void *) button_queue, 5, NULL, 0);
+
+  xTaskCreate(&measure_DHT_save_data_JSON_task, "DHT_task", 60000, NULL, 5, NULL);
+
+  send_m();
 }

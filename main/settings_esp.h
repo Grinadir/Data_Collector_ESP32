@@ -2,6 +2,9 @@
 #define SETTINGS_ESP_H
 #include "stdint.h"
 
+
+#define BUTTON_AP_WIFI GPIO_NUM_18
+
 struct server_settings_esp{
     char * ip_server;
     uint16_t port;
