@@ -9,6 +9,7 @@
 
 static const char *TAG_DATA_JSON = "WORK WITH JSON DATA";
 extern struct all_settings_esp all_settings;
+extern struct statuses stat_e;
 
 void _set_parametr_from_cJSON(cJSON *cjson, char **parametr)
 {
@@ -97,8 +98,9 @@ void get_wifi_settings(char *SSID_Client, char *password_client, char *SSID_AP, 
     cJSON *json_password_client = cJSON_GetObjectItem(wifi_settings, "password_client");
     cJSON *json_ssid_ap = cJSON_GetObjectItem(wifi_settings, "ssid_ap");
     cJSON *json_password_ap = cJSON_GetObjectItem(wifi_settings, "password_ap");
-    cJSON *json_is_ap_active = cJSON_GetObjectItem(wifi_settings, "is_ap_active");
     #endif
+    cJSON *json_is_ap_active = cJSON_GetObjectItem(wifi_settings, "is_ap_active");
+    
     if (json_ssid_client != NULL) // && json_password_client != NULL)
     {
         SSID_Client = json_ssid_client->valuestring;
@@ -129,6 +131,7 @@ void init_wifi_settings_from_json_file()
     _set_parametr_from_cJSON(json_password_client, &all_settings.wifi_settings.password_client);
     output_settings();
 }
+
 
 void save_humidity_temperature_in_json(float hum, float temp, char *time)
 {
@@ -233,3 +236,4 @@ void struct_to_array_json(struct data_temperature_and_humidity *data_t_h, char *
     else
         ESP_LOGE(TAG, "ERROR with wrapper");
 }
+

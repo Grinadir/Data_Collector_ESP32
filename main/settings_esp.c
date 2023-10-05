@@ -5,6 +5,8 @@
 static const char *TAG = "SETTINGS ESP";
 
 extern struct all_settings_esp all_settings;
+extern struct statuses stat_e;
+
 void output_settings()
 {
     if (all_settings.wifi_settings.ssid_client != NULL)
@@ -26,4 +28,17 @@ void output_settings()
         ESP_LOGI(TAG, "password ap: %s", all_settings.wifi_settings.password_ap);
     else
         ESP_LOGI(TAG, "password ap is NULL!!");
+}
+
+uint8_t is_wifi_ap_status()
+{
+    return stat_e.statuses_esp & MASK_WIFI_AP_ON;
+}
+
+void set_wifi_ap_status(uint8_t status)
+{
+    if (status)
+        stat_e.statuses_esp |= MASK_WIFI_AP_ON;
+    else
+        stat_e.statuses_esp ^= MASK_WIFI_AP_ON;
 }

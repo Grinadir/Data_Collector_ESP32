@@ -6,19 +6,7 @@
 
 
 
-<script>
-    function onClickSave() {
-        alert("I am an alert box!");
-        fetch("/json")
-            .then((response) => {
-                return response.json();
-            })
-            .then((data) => {
-                console.log(data);
-                document.getElementById('data').value = data.message;
-            })
-    }
-</script>
+
 
 <head>
     <meta charset="utf-8">
@@ -44,13 +32,27 @@
                 <div class="test">
                     <div>This microcontroller ESP32 works to transmit data to the server.</div>
                 </div>
-                <div><textarea id="server_ip" text=data.message>data.message</textarea></div>
-                <div><textarea id="server_port" text=data.message>data.message</textarea></div>
-                <div><button type="submit" id="submit" onclick="onClickSave()">SAVE</button></div>
+                <div><label>IP Server: </label></br><input type="text" id="server_ip"
+                        text=data.message>data.message</input></div>
+                <div><label>Port server: </label></br><input type="'text" id="server_port"
+                        text=data.message>data.message</input></div>
+                <div></br><button type="submit" id="submit" onclick="onClickSave()">SAVE</button></div>
             </div>
         </div>
     </div>
-
+    <script>
+        function onClickSave() {
+            alert("I am an alert box!");
+            fetch("/json")
+                .then((response) => {
+                    return response.json();
+                })
+                .then((data) => {
+                    console.log(data);
+                    document.getElementById('data').value = data.message;
+                })
+        }
+    </script>
 
 </body>
 

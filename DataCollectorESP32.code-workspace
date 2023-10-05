@@ -46,7 +46,12 @@
 			"spiffs.h": "c",
 			"gpio.h": "c",
 			"wifi_json.h": "c",
-			"esp_mac.h": "c"
+			"esp_mac.h": "c",
+			"compare": "cpp",
+			"esp_tls_mbedtls.h": "c",
+			"esp_tls_wolfssl.h": "c",
+			"esp_http_client.h": "c",
+			"cerrno": "c"
 		}
 	}
 }

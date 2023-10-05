@@ -45,9 +45,13 @@
 
 static const char *TAG = "MAIN";
 
-uint8_t is_ap_active = 0;
+//uint8_t is_ap_active = 0;
+
+
 
 struct all_settings_esp all_settings;
+struct statuses stat_e;
+
 
 struct data_temperature_and_humidity data_t_h[288];
 
@@ -107,5 +111,4 @@ void app_main(void)
 
   xTaskCreate(&measure_DHT_save_data_JSON_task, "DHT_task", 60000, NULL, 5, NULL);
 
-  send_m();
 }

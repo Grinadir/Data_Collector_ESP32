@@ -1,4 +1,5 @@
 {
     "ssid_client": "undefined",
-    "password_client": "undefined"
+    "password_client": "undefined",
+    "ap_active": "no"
 }

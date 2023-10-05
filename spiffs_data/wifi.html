@@ -44,9 +44,9 @@
             <div class="right_big_bar">
 
                 <div>WIFI SSID</div>
-                <div><textarea id="ssid_client" text=data.message>data.message</textarea></div>
+                <div><input id="ssid_client" type="text" value=""></input></div>
                 <div>PASSWORD</div>
-                <div><textarea id="password_client" text=data_message>data.message</textarea></div>
+                <div><input id="password_client" type="text" value=""></input></div>
                 <div><button type="submit" id="sendPost" onclick="save_WiFi_JSON()">SAVE</button></div>
                 <div class="ap">----------------------------------------------------------------</div>
                 <div class="ap">Now AP is ON</div>
@@ -74,6 +74,7 @@
         }
 
         function get_WiFi_JSON() {
+            console.log("Try to get wifi.json")
             fetch('/wifi_json', {
                 method: 'GET',
                 headers: {
@@ -87,6 +88,9 @@
                     var json = JSON.stringify(response);
                     var wifi = JSON.parse(json);
                     var ap = wifi.ap_active;
+                    var ssid_client=wifi.ssid_client;
+                    document.getElementById("ssid_client").value = wifi.ssid_client;
+                    document.getElementById("password_client").value = wifi.password_client;
                     if (ap != "yes") {
 
                         var accessPointInfo = document.querySelectorAll(".ap");
@@ -95,6 +99,7 @@
                             accessPointInfo.classList.add("hidden");
                         });
                     }
+
 
                 })
 
@@ -120,7 +125,6 @@
 
 
         get_WiFi_JSON();
-        //add_text_about_ap();
 
     </script>
 </body>

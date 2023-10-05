@@ -7,9 +7,8 @@
 #include "wifi_client.h"
 #include "data_JSON.h"
 #include "data_temperature_and_humidity.h"
+#include "settings_esp.h"
 
-// char buf_index_html[] = "<!DOCTYPE html><html><head><style type=\"text/css\">html {  font-family: Arial;  display: inline-block;  margin: 0px auto;  text-align: center;}h1{  color: #070812;  padding: 2vh;}.button {  display: inline-block;  background-color: #b30000; //red color  border: none;  border-radius: 4px;  color: white;  padding: 16px 40px;  text-decoration: none;  font-size: 30px;  margin: 2px;  cursor: pointer;}.button2 {  background-color: #364cf4; //blue color}.content {   padding: 50px;}.card-grid {  max-width: 800px;  margin: 0 auto;  display: grid;  grid-gap: 2rem;  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));}.card {  background-color: white;  box-shadow: 2px 2px 12px 1px rgba(140,140,140,.5);}.card-title {  font-size: 1.2rem;  font-weight: bold;  color: #034078}</style>  <title>ESP32 WEB SERVER</title>  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">  <link rel=\"icon\" href=\"data:,\">  <link rel=\"stylesheet\" href=\"https://use.fontawesome.com/releases/v5.7.2/css/all.css\"    integrity=\"sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr\" crossorigin=\"anonymous\">  <link rel=\"stylesheet\" type=\"text/css\" ></head><body>  <h2>ESP32 WEB SERVER</h2>  <div class=\"content\">    <div class=\"card-grid\">      <div class=\"card\">        <p><i class=\"fas fa-lightbulb fa-2x\" style=\"color:#c81919;\"></i>     <strong>GPIO2</strong></p>        <p>GPIO state: <strong> ON</strong></p>        <p>          <a href=\"/led2on\"><button class=\"button\">ON</button></a>          <a href=\"/led2off\"><button class=\"button button2\">OFF</button></a>        </p>      </div>    </div>  </div></body></html>";
-extern uint8_t is_ap_active;
 static char TAG[] = "WEB SERVER";
 extern char data[1000];
 char buf_index_html[4096];
@@ -24,6 +23,7 @@ char buff_css[1000];
 
 void load_spiffs_to_buffer()
 {
+    set_wifi_JSON_Info(all_settings.wifi_settings.ssid_client, all_settings.wifi_settings.password_client, "22222", "3333", is_wifi_ap_status());
     read_file_from_spiffs("/spiffs_data/index.html", buf_index_html);
     read_file_from_spiffs("/spiffs_data/wifi.html", buf_wifi_html);
     read_file_from_spiffs("/spiffs_data/data.html", buf_data_html);
@@ -60,19 +60,17 @@ void update_for_server()
 
 esp_err_t send_web_page(httpd_req_t *req)
 {
-    {
-        int response;
-        response = httpd_resp_send(req, buf_index_html, HTTPD_RESP_USE_STRLEN);
-
-        return response;
-    }
+    int response;
+    response = httpd_resp_send(req, buf_index_html, HTTPD_RESP_USE_STRLEN);
+    update_for_server();
+    return response;
 }
 
 esp_err_t send_wifi_page(httpd_req_t *req)
 {
     int response;
     response = httpd_resp_send(req, buf_wifi_html, HTTPD_RESP_USE_STRLEN);
-
+    update_for_server();
     return response;
 }
 
@@ -80,7 +78,7 @@ esp_err_t send_data_page(httpd_req_t *req)
 {
     int response;
     response = httpd_resp_send(req, buf_data_html, HTTPD_RESP_USE_STRLEN);
-
+    update_for_server();
     return response;
 }
 
@@ -88,104 +86,82 @@ esp_err_t send_about_page(httpd_req_t *req)
 {
     int response;
     response = httpd_resp_send(req, buf_about_html, HTTPD_RESP_USE_STRLEN);
-
+    update_for_server();
     return response;
 }
 
 esp_err_t send_css(httpd_req_t *req)
 {
-    {
-
-        int response;
-        printf("%s\n", buff_css);
-        response = httpd_resp_send(req, buff_css, HTTPD_RESP_USE_STRLEN);
-
-        return response;
-    }
+    int response;
+    response = httpd_resp_send(req, buff_css, HTTPD_RESP_USE_STRLEN);
+    update_for_server();
+    return response;
 }
 
 esp_err_t send_json(httpd_req_t *req)
 {
-    {
-
-        int response;
-        response = httpd_resp_send(req, data_json, HTTPD_RESP_USE_STRLEN);
-
-        return response;
-    }
+    int response;
+    response = httpd_resp_send(req, data_json, HTTPD_RESP_USE_STRLEN);
+    update_for_server();
+    return response;
 }
 
 esp_err_t send_wifi_json(httpd_req_t *req)
 {
-    {
-        int response;
-        response = httpd_resp_send(req, wifi_json, HTTPD_RESP_USE_STRLEN);
-
-        return response;
-    }
+    int response;
+    response = httpd_resp_send(req, wifi_json, HTTPD_RESP_USE_STRLEN);
+    update_for_server();
+    return response;
 }
 
 esp_err_t send_data_json(httpd_req_t *req)
 {
-    {
-        int response;
-        response = httpd_resp_send(req, data, HTTPD_RESP_USE_STRLEN);
-
-        return response;
-    }
+    int response;
+    response = httpd_resp_send(req, data, HTTPD_RESP_USE_STRLEN);
+    update_for_server();
+    return response;
 }
 
 esp_err_t post_wifi_json(httpd_req_t *req)
 {
     char request[req->content_len];
     int ret = httpd_req_recv(req, request, req->content_len);
-    printf("%.*s\n", ret, request);
     cJSON *json = cJSON_Parse(request);
     cJSON *ssid_client = cJSON_GetObjectItem(json, "ssid_client");
     cJSON *password_client = cJSON_GetObjectItem(json, "password_client");
-    if (ssid_client != NULL && password_client!=NULL){
-        printf("wifi client %s\n", ssid_client->valuestring);
-        printf("password client: %s\n", password_client->valuestring);
-    }
-    else
-        ESP_LOGE(TAG, "wifiClient is NULL");
-    set_wifi_JSON_Info(ssid_client->valuestring, password_client->valuestring, "22222", "3333", 1);
+    all_settings.wifi_settings.ssid_client = ssid_client->valuestring;
+    all_settings.wifi_settings.password_client = password_client->valuestring;
+    ret = httpd_resp_send(req, "OK", HTTPD_RESP_USE_STRLEN);
     update_for_server();
-    return 0;
+    return ret;
 }
 
 esp_err_t send_about_json(httpd_req_t *req)
 {
-    {
-        int response;
-        response = httpd_resp_send(req, about_json, HTTPD_RESP_USE_STRLEN);
-
-        return response;
-    }
+    int response;
+    response = httpd_resp_send(req, about_json, HTTPD_RESP_USE_STRLEN);
+    update_for_server();
+    return response;
 }
 
 esp_err_t send_log(httpd_req_t *req)
 {
-    {
-        int response;
-        response = httpd_resp_send(req, data_log, HTTPD_RESP_USE_STRLEN);
-
-        return response;
-    }
+    int response;
+    response = httpd_resp_send(req, data_log, HTTPD_RESP_USE_STRLEN);
+    update_for_server();
+    return response;
 }
 
 esp_err_t stop_ap(httpd_req_t *req)
 {
     ESP_LOGE(TAG, "STOP AP");
     int response;
+    char ok[3]="OK";
+    response = httpd_resp_send(req, ok, HTTPD_RESP_USE_STRLEN);
+    vTaskDelay(100 / portTICK_PERIOD_MS);
     if (esp_delete_wifi_ap() == ESP_OK)
-    {
-        is_ap_active = 0;
-        wifi_init_sta();
-    }
-
-    response = httpd_resp_send(req, "OK", HTTPD_RESP_USE_STRLEN);
-
+       wifi_init_sta();
+    update_for_server();
     return response;
 }
 
@@ -197,7 +173,7 @@ esp_err_t post_json(httpd_req_t *req)
     cJSON *json = cJSON_Parse(request);
     char *ssid_client = cJSON_GetObjectItem(json, "ssid_client")->valuestring;
     printf("ssid client=%s\n", ssid_client);
-
+    update_for_server();
     return 0;
 }
 
@@ -223,7 +199,7 @@ esp_err_t get_req_about_handler(httpd_req_t *req)
 
 esp_err_t get_exit(httpd_req_t *req)
 {
-    return 0; 
+    return 0;
 }
 
 esp_err_t get_css_handler(httpd_req_t *req)
@@ -357,9 +333,9 @@ httpd_uri_t log_get = {
 
 httpd_handle_t setup_server(void)
 {
-    load_spiffs_to_buffer();
+    update_for_server();
     httpd_config_t config = HTTPD_DEFAULT_CONFIG();
-    config.max_uri_handlers=12;
+    config.max_uri_handlers = 14;
     httpd_handle_t server = NULL;
     if (httpd_start(&server, &config) == ESP_OK)
     {

@@ -37,7 +37,7 @@ extern struct all_settings_esp all_settings;
 
 #define EXAMPLE_ESP_WIFI_SSID all_settings.wifi_settings.ssid_client     
 #define EXAMPLE_ESP_WIFI_PASS all_settings.wifi_settings.password_client 
-#define EXAMPLE_ESP_MAXIMUM_RETRY 5
+#define EXAMPLE_ESP_MAXIMUM_RETRY 10
 
 static EventGroupHandle_t s_wifi_event_group;
 

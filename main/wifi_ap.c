@@ -4,6 +4,7 @@
 #include "esp_log.h"
 #include "esp_mac.h"
 #include "data_JSON.h"
+#include "settings_esp.h"
 
 #define AP_ESP_WIFI_SSID "ESP32-WIFI"
 #define AP_ESP_WIFI_PASS "12345789"
@@ -12,6 +13,7 @@
 
 static const char *TAG = "wifi softAP";
 static esp_netif_t *esp_netif_ap;
+
 
 static void wifi_event_handler(void *arg, esp_event_base_t event_base,
                                int32_t event_id, void *event_data)
@@ -32,7 +34,8 @@ static void wifi_event_handler(void *arg, esp_event_base_t event_base,
 
 void wifi_init_softap(void)
 {
-    
+
+
     ESP_ERROR_CHECK(esp_netif_init());
     ESP_ERROR_CHECK(esp_event_loop_create_default());
     esp_netif_ap = esp_netif_create_default_wifi_ap();
@@ -66,7 +69,6 @@ void wifi_init_softap(void)
 
     ESP_LOGI(TAG, "wifi_init_softap finished. SSID:%s password:%s channel:%d",
              AP_ESP_WIFI_SSID, AP_ESP_WIFI_PASS, AP_ESP_WIFI_CHANNEL);
-             //set_wifi_JSON_Info("SSID TEST", "PASS TEST", "SSID TEST", "PASS TEST", 1 );
 }
 
 esp_err_t esp_delete_wifi_ap(void)
@@ -89,6 +91,7 @@ esp_err_t esp_delete_wifi_ap(void)
             ESP_LOGE(TAG, "ERROR DEINIT WIFI (esp_wifi_deinit)");
             return err;
         }
+        set_wifi_ap_status(0);
         return err;
     }
     else

@@ -11,25 +11,26 @@
 #include "wifi_client.h"
 #include "web_server.h"
 
+#include "http_esp_client.h"
+
 #define DBG_OUTPUT_ENABLED
 #ifdef DBG_OUTPUT_ENABLED
 #define LOGI ESP_LOGI
 #define LOGE ESP_LOGE
 #define LOGW ESP_LOGW
 #else
-#define LOGI ESP_LOGI
-#define LOGE ESP_LOGE
-#define LOGW ESP_LOGW
+#define LOGI(...) 
+#define LOGE(...)
+#define LOGW(...)
 #endif
 
 static const char *TAG_DHT = "TASK DHT measure and save data JSON.";
 static const char *TAG_AP = "TASK Create AP";
 #define SAMPL_MESSUARE_SEC 3
-#ifdef DBG_OUTPUT_ENABLED
-#define DBG_LOGI ESP_LOGI
-#endif
+#define WIFI_AP_ON 1
 
 extern struct data_temperature_and_humidity data_t_h[288];
+extern struct statuses stat_e;
 
 void measure_DHT_save_data_JSON_task(void *pvParameter)
 
@@ -57,10 +58,11 @@ void measure_DHT_save_data_JSON_task(void *pvParameter)
             save_humidity_temperature_in_struct(getHumidity(), getTemperature(), time, data_t_h);
             is_log = 1;
             count++;
-            if (count == 3)
+            if (count == 200)
             {
                 struct_to_array_json(data_t_h, data, count);
                 LOGI(TAG_DHT, "SAVE to array");
+                send_m("192.168.1.10", 8080, data);
             }
         }
         else if ((long)get_timestamp() % SAMPL_MESSUARE_SEC != 0 && is_log == 1)
@@ -79,8 +81,7 @@ void create_wifi_access_point(void *pvParameters)
     while (1)
     {
         LOGI(TAG_AP, "Wait interput for button pressed.");
-        // Ждем события нажатия кнопки в очереди
-        if (xQueueReceive((QueueHandle_t) pvParameters, &but_pressed, portMAX_DELAY) && is_ap_active == 0)
+        if (xQueueReceive((QueueHandle_t)pvParameters, &but_pressed, portMAX_DELAY) && !is_wifi_ap_status())
         {
             LOGI(TAG_AP, "Button is pressed!");
             uint8_t i = 0;
@@ -100,20 +101,18 @@ void create_wifi_access_point(void *pvParameters)
                 {
                     wifi_init_softap();
                     update_for_server();
-                    is_ap_active = 1;
+                    set_wifi_ap_status(WIFI_AP_ON);
                 }
                 else
-                    LOGE(TAG_AP, "FAILLED TO CREATE AP");
+                    LOGE(TAG_AP, "STA is not delated. FAILLED TO CREATE AP.");
             }
             else
             {
                 LOGI(TAG_AP, "BUTTON not 3 sec pressed");
             }
         }
-        else if (is_ap_active)
-        {
-            LOGE(TAG_AP, "AP is already active!");
-        }
+        else if(is_wifi_ap_status())
+            LOGE(TAG_AP, "FAILLED TO CREATE AP. AP is already active.");
     };
     vTaskDelete(NULL);
 }
