@@ -24,6 +24,17 @@
 
 #include "DHT.h"
 
+//#define DBG_OUTPUT_ENABLED
+#ifdef DBG_OUTPUT_ENABLED
+#define LOGI ESP_LOGI
+#define LOGE ESP_LOGE
+#define LOGW ESP_LOGW
+#else
+#define LOGI(...) 
+#define LOGE(...)
+#define LOGW(...)
+#endif
+
 // == global defines =============================================
 
 static const char *TAG = "DHT";
@@ -52,18 +63,18 @@ void errorHandler(int response)
     {
 
     case DHT_TIMEOUT_ERROR:
-        ESP_LOGE(TAG, "Sensor Timeout\n");
+        LOGE(TAG, "Sensor Timeout\n");
         break;
 
     case DHT_CHECKSUM_ERROR:
-        ESP_LOGE(TAG, "CheckSum error\n");
+        LOGE(TAG, "CheckSum error\n");
         break;
 
     case DHT_OK:
         break;
 
     default:
-        ESP_LOGE(TAG, "Unknown error\n");
+        LOGE(TAG, "Unknown error\n");
     }
 }
 

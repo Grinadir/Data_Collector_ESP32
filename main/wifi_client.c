@@ -35,8 +35,10 @@ extern struct all_settings_esp all_settings;
 #define LOGW(...)
 #endif
 
-#define EXAMPLE_ESP_WIFI_SSID all_settings.wifi_settings.ssid_client     
-#define EXAMPLE_ESP_WIFI_PASS all_settings.wifi_settings.password_client 
+#define WIFI_STA_STATUS_CONNECTED 1
+#define WIFI_STA_STATUS_DISCONNECTED 0
+#define EXAMPLE_ESP_WIFI_SSID all_settings.wifi_settings.ssid_client
+#define EXAMPLE_ESP_WIFI_PASS all_settings.wifi_settings.password_client
 #define EXAMPLE_ESP_MAXIMUM_RETRY 10
 
 static EventGroupHandle_t s_wifi_event_group;
@@ -59,6 +61,7 @@ static void event_handler(void *arg, esp_event_base_t event_base,
     }
     else if (event_base == WIFI_EVENT && event_id == WIFI_EVENT_STA_DISCONNECTED)
     {
+        set_wifi_sta_status(WIFI_STA_STATUS_DISCONNECTED);
         if (s_retry_num < EXAMPLE_ESP_MAXIMUM_RETRY)
         {
             esp_wifi_connect();
@@ -69,10 +72,11 @@ static void event_handler(void *arg, esp_event_base_t event_base,
         {
             xEventGroupSetBits(s_wifi_event_group, WIFI_FAIL_BIT);
         }
-        LOGI(TAG, "connect to the AP fail");
+        LOGE(TAG, "connect to the AP fail");
     }
     else if (event_base == IP_EVENT && event_id == IP_EVENT_STA_GOT_IP)
     {
+        set_wifi_sta_status(WIFI_STA_STATUS_CONNECTED);
         ip_event_got_ip_t *event = (ip_event_got_ip_t *)event_data;
         LOGI(TAG, "got ip:" IPSTR, IP2STR(&event->ip_info.ip));
         s_retry_num = 0;
@@ -80,6 +84,25 @@ static void event_handler(void *arg, esp_event_base_t event_base,
     }
 }
 
+static void event_handler_output_wifi_sta(void *arg, esp_event_base_t event_base,
+                                          int32_t event_id, void *event_data)
+{
+    if (event_base == WIFI_EVENT && event_id == WIFI_EVENT_STA_START)
+    {
+        //esp_wifi_connect();
+    }
+    else if (event_base == WIFI_EVENT && event_id == WIFI_EVENT_STA_DISCONNECTED)
+    {
+
+        LOGE(TAG, "WIFI DISCONNECTED");
+    }
+    else if (event_base == IP_EVENT && event_id == IP_EVENT_STA_GOT_IP)
+    {
+        ip_event_got_ip_t *event = (ip_event_got_ip_t *)event_data;
+        LOGI(TAG, "WIFI CONNECTED");
+        LOGI(TAG, "got ip:" IPSTR, IP2STR(&event->ip_info.ip));
+    }
+}
 void wifi_init_sta(void)
 {
     s_wifi_event_group = xEventGroupCreate();
@@ -104,6 +127,18 @@ void wifi_init_sta(void)
                                                         &event_handler,
                                                         NULL,
                                                         &instance_got_ip));
+    #if 1
+    ESP_ERROR_CHECK(esp_event_handler_instance_register(WIFI_EVENT,
+                                                        ESP_EVENT_ANY_ID,
+                                                        &event_handler_output_wifi_sta,
+                                                        NULL,
+                                                        &instance_any_id));
+    ESP_ERROR_CHECK(esp_event_handler_instance_register(IP_EVENT,
+                                                        IP_EVENT_STA_GOT_IP,
+                                                        &event_handler_output_wifi_sta,
+                                                        NULL,
+                                                        &instance_got_ip));
+    #endif
 
     wifi_config_t wifi_config = {
         .sta = {
@@ -126,12 +161,12 @@ void wifi_init_sta(void)
     if (bits & WIFI_CONNECTED_BIT)
     {
         LOGI(TAG, "connected to ap SSID:%s password:%s",
-                 EXAMPLE_ESP_WIFI_SSID, EXAMPLE_ESP_WIFI_PASS);
+             EXAMPLE_ESP_WIFI_SSID, EXAMPLE_ESP_WIFI_PASS);
     }
     else if (bits & WIFI_FAIL_BIT)
     {
         LOGE(TAG, "Failed to connect to SSID:%s, password:%s",
-                 EXAMPLE_ESP_WIFI_SSID, EXAMPLE_ESP_WIFI_PASS);
+             EXAMPLE_ESP_WIFI_SSID, EXAMPLE_ESP_WIFI_PASS);
         s_retry_num = 0;
     }
     else

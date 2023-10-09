@@ -18,7 +18,7 @@ void send_m(char *ip_addr, uint32_t port, char *post_data)
 
     // POST
     const char *_post_data = post_data;
-    esp_http_client_set_url(client, "/post");
+    esp_http_client_set_url(client, "/mcu_data");
     esp_http_client_set_method(client, HTTP_METHOD_POST);
     esp_http_client_set_header(client, "Content-Type", "application/json");
     esp_http_client_set_post_field(client, _post_data, strlen(_post_data));
@@ -35,4 +35,4 @@ void send_m(char *ip_addr, uint32_t port, char *post_data)
     }
     esp_http_client_cleanup(client);
 }
-// ESP_LOG_BUFFER_HEX(TAG, local_response_buffer, strlen(local_response_buffer));
+

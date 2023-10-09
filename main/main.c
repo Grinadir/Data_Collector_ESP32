@@ -28,9 +28,6 @@
 #include "tasks.h"
 #include "http_esp_client.h"
 
-
-
-
 #define DBG_OUTPUT_ENABLED
 #ifdef DBG_OUTPUT_ENABLED
 #define LOGI ESP_LOGI
@@ -42,26 +39,18 @@
 #define LOGW ESP_LOGW
 #endif
 
-
 static const char *TAG = "MAIN";
 
-//uint8_t is_ap_active = 0;
-
-
+// uint8_t is_ap_active = 0;
 
 struct all_settings_esp all_settings;
 struct statuses stat_e;
-
 
 struct data_temperature_and_humidity data_t_h[288];
 
 char data[1000] = "\0";
 
 static QueueHandle_t button_queue = NULL;
-
-
-
-
 
 void IRAM_ATTR isrHandler(void *arg)
 {
@@ -79,8 +68,6 @@ void app_main(void)
   LOGI(TAG, "START MAIN APLICATION");
 
   button_queue = xQueueCreate(32, sizeof(bool));
-
-  
 
   gpio_install_isr_service(0);
   gpio_set_direction(GPIO_NUM_18, GPIO_MODE_INPUT);
@@ -103,12 +90,21 @@ void app_main(void)
   vTaskDelay(500 / portTICK_PERIOD_MS);
   wifi_init_sta();
   setup_server();
-  initialize_sntp();
-  obtain_time();
-  
+  xTaskCreatePinnedToCore(&create_wifi_access_point, "AP_task", 4096, (void *)button_queue, 5, NULL, 0);
 
-  xTaskCreatePinnedToCore(&create_wifi_access_point, "AP_task", 4096, (void *) button_queue, 5, NULL, 0);
+  if (is_wifi_sta_status())
+  {
+    LOGI(TAG, "Try to obtain time");
+    obtain_time();
+  }
+  else
+    LOGE(TAG, "WIFI STA is disconnected and the time is not updated");
+  vTaskDelay(3000 / portTICK_PERIOD_MS);
 
-  xTaskCreate(&measure_DHT_save_data_JSON_task, "DHT_task", 60000, NULL, 5, NULL);
+  if (is_time_sync())
+    xTaskCreate(&measure_DHT_save_data_JSON_task, "DHT_task", 60000, NULL, 5, NULL);
+  else
+    LOGE(TAG, "Task for messuare temp and humm not start");
 
+  init_event_and_schedule_system();
 }

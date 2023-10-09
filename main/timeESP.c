@@ -12,12 +12,17 @@
 #include "nvs_flash.h"
 #include "esp_sntp.h"
 #include "esp_netif.h"
+#include "settings_esp.h"
+
+#define TIME_IS_SYNCHRONISED 1
 
 static const char *TAG = "TIME";
+
 
 void time_sync_notification_cb()
 {
     ESP_LOGI(TAG, "ESP32 time is SYNC!!!");
+    set_time_status(TIME_IS_SYNCHRONISED);
 }
 
 void initialize_sntp(void)
@@ -35,6 +40,7 @@ void initialize_sntp(void)
 
 void obtain_time(void)
 {
+    initialize_sntp();
     char strftime_buf[64];
     time_t now = 0;
     struct tm timeinfo;

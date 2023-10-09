@@ -19,6 +19,10 @@
     "esp_log.h": "c",
     "esp_wifi.h": "c",
     "esp_event.h": "c",
-    "tuple": "c"
+    "tuple": "c",
+    "thread": "cpp",
+    "esp_attr.h": "c",
+    "bitset": "c",
+    "algorithm": "c"
   }
 }

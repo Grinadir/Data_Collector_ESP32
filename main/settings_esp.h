@@ -5,9 +5,10 @@
 
 
 #define BUTTON_AP_WIFI GPIO_NUM_18
-// |0|0|0|0|0|0|time is synchronized|wifi ap|
+// |0|0|0|0|0|wifi sta|time is synchronized|wifi ap|
 #define MASK_WIFI_AP_ON 1
 #define MASK_IS_TIME_SYNCH 2
+#define MASK_WIFI_STA_ON 4
 
 struct server_settings_esp{
     char * ip_server;
@@ -39,6 +40,11 @@ extern struct all_settings_esp all_settings;
 extern struct statuses stat_e;
 uint8_t is_wifi_ap_status();
 void set_wifi_ap_status(uint8_t status);
+uint8_t is_wifi_sta_status();
+void set_wifi_sta_status(uint8_t status);
+uint8_t is_time_sync();
+void set_time_status(uint8_t status);
+
 void output_settings();
 
 
